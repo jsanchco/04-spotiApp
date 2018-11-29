@@ -12,26 +12,53 @@ export class SpotifyService {
     console.log('Servicio de Spotify Listo!!!');
   }
 
-  getNewReleases() {
+  getQuery ( query: string) {
+    const url = `https://api.spotify.com/v1${ query }`;
 
     const headers = new HttpHeaders({
-      'Authorization': 'Bearer BQCHO1vJj6Qu3wyweZByp41w0lQGGkAEMuF-RGYWmlykqZ9-s9FwtGkN8o1yJAYZG-OlOi4GHAVFkVA9c5ABprLYFNjNRyJaBgynviXMRI898TFt3BHD4WXpZHPzNK7WNfRonSEo3Hck7Q',
+      'Authorization': 'Bearer BQCBxa9ETqZOspFQXN7SeKlnWTvCMKx9OX6gTel_MB9w0mpgZyK8ZrY0r1nZHo6Mt3IFxPhJ9D681JsV7ZtfJp1ymGJmb9DVuWgG_tnN5zEqBN181HX43xmSHDT14tFRtjImMmZRAh6oqQ',
     });
 
-    return this.http.get('https://api.spotify.com/v1/browse/new-releases', { headers })
-      .pipe( map ( data => {
-        return data['albums'].items;
-      }));
+    return this.http.get(url, { headers });
+  }
+
+  getNewReleases() {
+
+    return this.getQuery('/browse/new-releases').pipe( map ( data =>  data['albums'].items ));
+
+    // const headers = new HttpHeaders({
+    //   'Authorization': 'Bearer BQDHwujQPdSBoLFpdRlPrDrDcYsZzngFuY9j5VKsctfPT3RAoRmGiL_GdVG2AQKh47nr7qHpINhEQ9TLzqjZM3cS6LYJW6fSXFlBT9HOB9aqREgScbFqvtMC-Jc7iJDpLB-IH0ai_KTZMQ',
+    // });
+
+    // return this.http.get('https://api.spotify.com/v1/browse/new-releases', { headers })
+    //   .pipe( map ( data =>  data['albums'].items ));
 
   }
 
-  getArtista(termino: string) {
+  getArtistas(termino: string) {
 
-    const headers = new HttpHeaders({
-      'Authorization': 'Bearer BQCHO1vJj6Qu3wyweZByp41w0lQGGkAEMuF-RGYWmlykqZ9-s9FwtGkN8o1yJAYZG-OlOi4GHAVFkVA9c5ABprLYFNjNRyJaBgynviXMRI898TFt3BHD4WXpZHPzNK7WNfRonSEo3Hck7Q',
-    });
+    return this.getQuery(`/search?query=${ termino }&type=artist&market=ES&offset=0&limit=15`).pipe( map ( data => data['artists'].items ));
 
-    return this.http.get(`https://api.spotify.com/v1/search?query=${ termino }&type=artist&market=ES&offset=0&limit=15`, { headers });
+    // const headers = new HttpHeaders({
+    //   'Authorization': 'Bearer BQDHwujQPdSBoLFpdRlPrDrDcYsZzngFuY9j5VKsctfPT3RAoRmGiL_GdVG2AQKh47nr7qHpINhEQ9TLzqjZM3cS6LYJW6fSXFlBT9HOB9aqREgScbFqvtMC-Jc7iJDpLB-IH0ai_KTZMQ',
+    // });
+
+    // return this.http.get(`https://api.spotify.com/v1/search?query=${ termino }&type=artist&market=ES&offset=0&limit=15`, { headers })
+    //   .pipe( map ( data => data['artists'].items ));
+
+  }
+
+  getArtista(id: string) {
+
+    return this.getQuery(`/artists/${ id }`);
+      // .pipe( map ( data => data['artists'].items ));
+
+  }
+
+  getTopTracks(id: string) {
+
+    return this.getQuery(`/artists/${ id }/top-tracks?country=ES`)
+       .pipe( map( data => data['tracks'] ));
 
   }
 }
